@@ -1,6 +1,6 @@
 {
     "name": "hkweather-backend",
     "compatibility_date": "2025-10-04",
-    "main": "src/index.ts", // or whatever your entry file is
+    "main": "server.js", // or whatever your entry file is
     "compatibility_flags": ["nodejs_compat"]
   }
