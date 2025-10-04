@@ -1,0 +1,4 @@
+name = "hkweather-backend"
+compatibility_date = "2025-10-04"
+main = "server.js"
+compatibility_flags = ["nodejs_compat"]
