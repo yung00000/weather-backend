@@ -8,30 +8,32 @@ const PORT = 3005;
 // Enable CORS for frontend
 app.use(cors());
 
-// Endpoint to fetch current HK weather
+// Endpoint to fetch full HK weather data
 app.get('/weather', async (req, res) => {
   try {
     const hkoUrl = 'https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=rhrread&lang=tc';
     const response = await fetch(hkoUrl);
     const data = await response.json();
-    
-    // Extract key fields from the API response
-    // Get the first temperature reading (or find a specific location)
-    const temperatureData = data.temperature?.data?.[0] || {};
-    const humidityData = data.humidity?.data?.[0] || {};
-    
+
+    // Structure the response to include all relevant fields
     const weatherSummary = {
-      temperature: temperatureData.value ? `${temperatureData.value}°C` : 'N/A',
-      humidity: humidityData.value ? `${humidityData.value}%` : 'N/A',
+      temperature: data.temperature?.data || [],
+      rainfall: data.rainfall?.data || [],
+      humidity: data.humidity?.data?.find(h => h.place === '香港天文台')?.value || data.humidity?.data?.[0]?.value || 'N/A',
+      warningMessage: data.warningMessage || [],
+      tcMessage: data.tcmessage || [],
+      icon: data.icon?.[0] || 'N/A',
       updateTime: data.updateTime || 'N/A',
-      icon: data.icon ? data.icon[0] : 'N/A',  // Weather icon code
-      place: temperatureData.place || 'N/A'  // Location name
+      rainfallTime: {
+        startTime: data.rainfall?.startTime || 'N/A',
+        endTime: data.rainfall?.endTime || 'N/A'
+      }
     };
-    
+
     res.json(weatherSummary);
   } catch (error) {
-    console.error('Weather API Error:', error.message);
-    res.status(500).json({ error: 'Failed to fetch weather data' });
+    console.error('Error fetching HKO data:', error.message);
+    res.status(500).json({ error: 'Failed to fetch weather data', details: error.message });
   }
 });
 
