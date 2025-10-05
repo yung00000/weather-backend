@@ -189,14 +189,24 @@ class WeatherService {
       return;
     }
 
+    // Check if already running
+    if (this.automationInterval) {
+      logger.info('Automation is already running');
+      return;
+    }
+
     logger.logAutomationStart();
     
-    // Initial fetch
-    this.fetchAutomatedData();
+    // Initial fetch (wrapped in async to avoid global scope issues)
+    this.fetchAutomatedData().catch(error => {
+      logger.error('Initial automated fetch failed', { error: error.message });
+    });
     
     // Set up interval
     this.automationInterval = setInterval(() => {
-      this.fetchAutomatedData();
+      this.fetchAutomatedData().catch(error => {
+        logger.error('Automated fetch failed', { error: error.message });
+      });
     }, HKO_CONFIG.automation.interval);
   }
 

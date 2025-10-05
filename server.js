@@ -5,8 +5,8 @@ import { HKO_CONFIG } from './config.js';
 // Initialize weather service
 const weatherService = new WeatherService();
 
-// Start automation on startup
-weatherService.startAutomation();
+// Note: Automation is not started automatically in Cloudflare Workers
+// due to global scope restrictions. Use /weather/automation/start endpoint
 
 export default {
   async fetch(request, env, ctx) {
@@ -219,6 +219,23 @@ export default {
         });
       }
 
+      // Route: /weather/automation/status - Get automation status
+      if (path === '/weather/automation/status') {
+        const isRunning = weatherService.automationInterval !== null;
+        
+        return new Response(JSON.stringify({ 
+          running: isRunning,
+          enabled: HKO_CONFIG.automation.enabled,
+          interval: HKO_CONFIG.automation.interval,
+          endpoints: HKO_CONFIG.automation.endpoints
+        }), {
+          headers: { 
+            'Content-Type': 'application/json',
+            ...corsHeaders 
+          },
+        });
+      }
+
       // Route: /weather/info - Get API information
       if (path === '/weather/info') {
         const info = {
@@ -234,7 +251,8 @@ export default {
             '/weather/cache/status - Cache status',
             '/weather/cache/clear - Clear cache',
             '/weather/automation/start - Start automation',
-            '/weather/automation/stop - Stop automation'
+            '/weather/automation/stop - Stop automation',
+            '/weather/automation/status - Automation status'
           ],
           supportedDataTypes: HKO_CONFIG.dataTypes,
           supportedLanguages: HKO_CONFIG.languages,

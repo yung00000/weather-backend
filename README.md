@@ -124,11 +124,12 @@ curl "https://your-domain.com/weather/cache/status"
 
 ## 🔄 Automation
 
-The system automatically fetches weather data at configurable intervals:
+The system can automatically fetch weather data at configurable intervals:
 
 - **Default Interval**: 5 minutes
 - **Default Endpoints**: Current weather, forecast, warnings
 - **Configurable**: Via environment variables or API calls
+- **Cloudflare Workers**: Automation must be started manually due to global scope restrictions
 
 ### Start/Stop Automation
 
@@ -138,7 +139,14 @@ curl -X POST "https://your-domain.com/weather/automation/start"
 
 # Stop automation
 curl -X POST "https://your-domain.com/weather/automation/stop"
+
+# Check automation status
+curl "https://your-domain.com/weather/automation/status"
 ```
+
+### Cloudflare Workers Note
+
+Due to Cloudflare Workers' global scope restrictions, automation is **not started automatically**. You must manually start it using the `/weather/automation/start` endpoint after deployment.
 
 ## 📝 Logging
 
@@ -183,6 +191,18 @@ compatibility_date = "2024-01-01"
 ```bash
 wrangler deploy
 ```
+
+4. **Important**: Start automation manually after deployment:
+```bash
+curl -X POST "https://your-worker.your-subdomain.workers.dev/weather/automation/start"
+```
+
+#### Cloudflare Workers Limitations
+
+- **No Global Scope Async**: Automation cannot start automatically
+- **Manual Start Required**: Use `/weather/automation/start` endpoint
+- **Memory Limits**: Cache is limited by worker memory
+- **Execution Time**: Each request has a 30-second timeout limit
 
 ### Traditional Node.js Server
 
