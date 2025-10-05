@@ -1,16 +1,26 @@
 {
   "name": "weather-backend",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "2.0.0",
+  "description": "Enhanced Hong Kong Observatory Weather API Backend with Automation",
+  "type": "module",
+  "main": "server.js",
   "scripts": {
-      "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node test.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yung00000/weather-backend.git"
   },
-  "keywords": [],
+  "keywords": [
+    "weather",
+    "hong-kong",
+    "hko",
+    "api",
+    "automation",
+    "cloudflare-workers"
+  ],
   "author": "",
   "license": "ISC",
   "bugs": {
@@ -21,5 +31,8 @@
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "node-fetch": "^3.3.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
